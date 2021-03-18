@@ -17,9 +17,9 @@ interface NotesDAO {
     suspend fun deleteNote(note: Note)
 
     @Query("SELECT * FROM notes_table ORDER BY date_created")
-    suspend fun getAllNotes(): LiveData<List<Note>>
+    fun getAllNotes(): LiveData<List<Note>>
 
     @Query("SELECT * FROM notes_table WHERE note_tag = :tag ORDER BY date_created")
-    suspend fun getNotesByTag(tag: String): LiveData<List<Note>>
+    suspend fun getNotesByTag(tag: String): List<Note>
 
 }
