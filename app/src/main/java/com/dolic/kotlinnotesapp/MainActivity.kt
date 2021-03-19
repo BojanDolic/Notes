@@ -38,6 +38,8 @@ class MainActivity : AppCompatActivity() {
             insets.consumeSystemWindowInsets()
         }
 
+        binding.appbarlayout.outlineProvider = null
+
         viewmodel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
         val adapter = NotesRecyclerAdapter()
