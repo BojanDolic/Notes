@@ -61,7 +61,9 @@
         android:layout_below="@id/toolbar"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         tools:listitem="@layout/note_item"
-        android:layout_marginBottom="56dp"/>
+        android:layout_marginBottom="56dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"/>
 
 
     <com.google.android.material.bottomappbar.BottomAppBar

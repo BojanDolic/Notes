@@ -1,7 +1,12 @@
 package com.dolic.kotlinnotesapp.adapters
 
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.selection.ItemDetailsLookup
+import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -9,6 +14,10 @@ import com.dolic.kotlinnotesapp.databinding.NoteItemBinding
 import com.dolic.kotlinnotesapp.entities.Note
 
 class NotesRecyclerAdapter : ListAdapter<Note, NotesRecyclerAdapter.ViewHolder>(DIFF_CALLBACK) {
+
+    /*init {
+        setHasStableIds(true)
+    }*/
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Note>() {
@@ -23,8 +32,11 @@ class NotesRecyclerAdapter : ListAdapter<Note, NotesRecyclerAdapter.ViewHolder>(
         }
     }
 
+    fun setTracker(tracker: SelectionTracker<Note>) {
+        noteTracker = tracker
+    }
 
-    var notes: List<Note> = listOf()
+    lateinit var noteTracker: SelectionTracker<Note>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = NoteItemBinding.inflate(LayoutInflater.from(parent.context))
@@ -32,15 +44,39 @@ class NotesRecyclerAdapter : ListAdapter<Note, NotesRecyclerAdapter.ViewHolder>(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindViews(getItem(position))
+        val model = currentList[position]
+        noteTracker.let {
+            holder.bindViews(model, it.isSelected(model))
+        }
+
     }
 
+    inner class ViewHolder(val binding: NoteItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    class ViewHolder(val binding: NoteItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bindViews(note: Note, isSelected: Boolean) = with(binding) {
+            noteItemDescriptionText.text = note.noteDesc
+            noteItemTitleText.text = note.noteTitle
 
-        fun bindViews(note: Note) {
-            binding.noteItemDescriptionText.text = note.noteDesc
-            binding.noteItemTitleText.text = note.noteTitle
+            if(isSelected) {
+                noteCardview.setStrokeColor(ColorStateList.valueOf(Color.BLACK))
+                noteCardview.strokeWidth = 6
+                noteCardview.cardElevation = 12f
+                noteCardview.translationZ = 12f
+            } else {
+
+            }
+
+            Log.d("TAG", "bindViews: $isSelected")
+
+        }
+
+        fun getItemDetails(): ItemDetailsLookup.ItemDetails<Note> {
+            return object : ItemDetailsLookup.ItemDetails<Note>() {
+
+                override fun getPosition(): Int = adapterPosition
+
+                override fun getSelectionKey(): Note? = currentList[adapterPosition]
+            }
         }
 
     }

@@ -16,6 +16,9 @@ import javax.inject.Inject
 class MainActivityViewModel @Inject constructor(
     val notesRepository: NotesRepository) : ViewModel() {
 
+    var selecting: Boolean = false
+
+
     fun getAllNotes(): LiveData<List<Note>> = notesRepository.notes
 
     fun insertNote(note: Note) {
