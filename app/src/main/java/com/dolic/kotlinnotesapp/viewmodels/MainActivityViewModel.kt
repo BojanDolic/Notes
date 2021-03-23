@@ -9,6 +9,7 @@ import com.dolic.kotlinnotesapp.entities.Note
 import com.dolic.kotlinnotesapp.repository.NotesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,4 +26,7 @@ class MainActivityViewModel @Inject constructor(
         viewModelScope.launch { notesRepository.insertNote(note) }
     }
 
+    suspend fun searchNotes(search: String): List<Note> = viewModelScope.async {
+            notesRepository.searchNotes(search)
+        }.await()
 }

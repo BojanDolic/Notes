@@ -63,7 +63,10 @@ class NotesRecyclerAdapter : ListAdapter<Note, NotesRecyclerAdapter.ViewHolder>(
                 noteCardview.cardElevation = 12f
                 noteCardview.translationZ = 12f
             } else {
-
+                noteCardview.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#cccccc")))
+                noteCardview.strokeWidth = 4
+                noteCardview.cardElevation = 0f
+                noteCardview.translationZ = 0f
             }
 
             Log.d("TAG", "bindViews: $isSelected")

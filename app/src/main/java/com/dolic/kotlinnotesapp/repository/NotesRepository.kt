@@ -23,4 +23,9 @@ class NotesRepository @Inject constructor(
         notesDAO.insertNote(note)
     }
 
+    @WorkerThread
+    suspend fun searchNotes(search: String): List<Note> {
+        return notesDAO.searchNotes(search)
+    }
+
 }

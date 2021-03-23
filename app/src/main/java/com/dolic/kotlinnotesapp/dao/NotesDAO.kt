@@ -22,4 +22,7 @@ interface NotesDAO {
     @Query("SELECT * FROM notes_table WHERE note_tag = :tag ORDER BY date_created")
     suspend fun getNotesByTag(tag: String): List<Note>
 
+    @Query("SELECT * FROM notes_table WHERE note_title LIKE '%' || :search || '%' OR note_desc LIKE '%' || :search || '%'")
+    suspend fun searchNotes(search: String): List<Note>
+
 }
