@@ -9,15 +9,17 @@ import com.dolic.kotlinnotesapp.entities.Note
 import com.dolic.kotlinnotesapp.repository.NotesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(
+class NotesViewModel @Inject constructor(
     val notesRepository: NotesRepository) : ViewModel() {
 
     var selecting: Boolean = false
+    var searchJob: Job? = null
 
 
     fun getAllNotes(): LiveData<List<Note>> = notesRepository.notes

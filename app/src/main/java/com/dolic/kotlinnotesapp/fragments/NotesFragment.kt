@@ -1,103 +1,106 @@
-package com.dolic.kotlinnotesapp
+package com.dolic.kotlinnotesapp.fragments
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.view.Menu
-import android.view.MenuItem
+import android.view.*
+import android.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.appcompat.view.ActionMode
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.dolic.kotlinnotesapp.R
 import com.dolic.kotlinnotesapp.adapters.NotesRecyclerAdapter
-import com.dolic.kotlinnotesapp.databinding.ActivityMainBinding
+import com.dolic.kotlinnotesapp.databinding.FragmentNotesBinding
 import com.dolic.kotlinnotesapp.entities.Note
 import com.dolic.kotlinnotesapp.selectionUtils.NoteItemKeyProvider
 import com.dolic.kotlinnotesapp.selectionUtils.NoteItemsDetailsLookup
 import com.dolic.kotlinnotesapp.viewmodels.NotesViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.core.widget.addTextChangedListener
-import com.dolic.kotlinnotesapp.fragments.NotesFragment
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
+/**
+ * Fragment which shows all notes added to the app
+ */
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), NotesFragment.FragmentActionModeStart {
+class NotesFragment : Fragment() {
 
-    private lateinit var binding: ActivityMainBinding
-    //private lateinit var viewmodel: NotesViewModel
+    public interface FragmentActionModeStart {
+        fun startActionMode(callback: ActionMode.Callback): ActionMode?
+    }
+
+    lateinit var actionModeInterface: FragmentActionModeStart
+
+    var _binding: FragmentNotesBinding? = null
+    val viewmodel by viewModels<NotesViewModel>()
 
     private var tracker: SelectionTracker<Note>? = null
 
     private var actionMode: ActionMode? = null
+    private val notesAdapter = NotesRecyclerAdapter()
+
+    val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentNotesBinding.inflate(
+            inflater,
+            container,
+            false
+        )
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setupRecycler()
+        setupSelectionTracker()
 
-        //viewmodel = ViewModelProvider(this).get(NotesViewModel::class.java)
+        viewmodel.getAllNotes().observe(viewLifecycleOwner, { notes ->
+            notesAdapter.submitList(notes)
+        })
 
-        /*setSupportActionBar(binding.toolbar)
-        actionBar?.setDisplayShowTitleEnabled(false)*/
+        /*binding.bottomAppBar.setOnMenuItemClickListener(object : Toolbar.OnMenuItemClickListener {
 
-        /*viewmodel.searchJob?.let {
-            if(it.isCancelled)
-                it.start()
-        }*/
-
-
-
-        /*val adapter = NotesRecyclerAdapter()
-        binding.notesRecycler.apply {
-            this.adapter = adapter
-            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        }
-
-        setupTracker(adapter)
-
-        viewmodel.getAllNotes().observe(this) {
-            adapter.submitList(it)
-        }
-
-        *//*binding.fab.setOnClickListener {
-            viewmodel.insertNote(Note(noteTitle = "Test title", noteDesc = binding.searchview.query.toString()))
-        }*//*
-
-        binding.searchNotesEdittext.addTextChangedListener { text: Editable? ->
-            text?.let {
-                viewmodel.searchJob = GlobalScope.launch {
-                    val notes = viewmodel.searchNotes(it.toString().trim())
-                    adapter.submitList(notes)
-                }
+            override fun onMenuItemClick(item: MenuItem?): Boolean {
+                TODO("Not yet implemented")
             }
-        }*/
 
+
+        })*/
+
+        /*binding.bottomAppBar.menu.findItem(R.id.menu_search).actionView.findViewById(R.id.)setOnClickListener {
+            binding.searchEdittext.isEnabled = true
+            binding.searchEdittext.requestFocus()
+        }*/
 
     }
 
     /**
-     * Function used to create SelectionTracker
-     * @param adapter Recyclerview adapter which is passed to NoteItemsDetailsLookup
+     * Function used to create SelectionTracker for recyclerview
      *
-     * @see NoteItemsDetailsLookup
+     * @see SelectionTracker
      */
-    /*fun setupTracker(adapter: NotesRecyclerAdapter) {
+    fun setupSelectionTracker() {
+
         tracker = SelectionTracker.Builder<Note>(
             "noteSelectionTracker",
             binding.notesRecycler,
-            NoteItemKeyProvider(adapter),
+            NoteItemKeyProvider(notesAdapter),
             NoteItemsDetailsLookup(binding.notesRecycler),
             StorageStrategy.createParcelableStorage(Note::class.java)
         )
             .withSelectionPredicate(
                 SelectionPredicates.createSelectAnything()
             ).build()
-        adapter.setTracker(tracker!!)
+        notesAdapter.setTracker(tracker!!)
 
         tracker?.addObserver(object : SelectionTracker.SelectionObserver<Note>() {
 
@@ -130,19 +133,9 @@ class MainActivity : AppCompatActivity(), NotesFragment.FragmentActionModeStart 
             }
         })
 
-    }*/
-
-    override fun startActionMode(callback: ActionMode.Callback): ActionMode? {
-        return startSupportActionMode(callback)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        //viewmodel.searchJob?.cancel()
     }
 
     fun setupActionMode(tracker: SelectionTracker<Note>?): ActionMode? {
-
         val actionModeCallback = object : ActionMode.Callback {
             override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
                 mode?.menuInflater?.inflate(R.menu.delete_toolbar_menu, menu)
@@ -162,16 +155,37 @@ class MainActivity : AppCompatActivity(), NotesFragment.FragmentActionModeStart 
                 actionMode = null
             }
         }
-        return startSupportActionMode(actionModeCallback)
+        return actionModeInterface.startActionMode(actionModeCallback)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        //tracker?.onRestoreInstanceState(savedInstanceState)
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        //tracker?.onSaveInstanceState(outState)
+        tracker?.onSaveInstanceState(outState)
     }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        tracker?.onRestoreInstanceState(savedInstanceState)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        actionModeInterface = context as FragmentActionModeStart
+    }
+
+    fun setupRecycler() {
+        binding.notesRecycler.apply {
+            this.adapter = notesAdapter
+            layoutManager = StaggeredGridLayoutManager(
+                2,
+                StaggeredGridLayoutManager.VERTICAL)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }
