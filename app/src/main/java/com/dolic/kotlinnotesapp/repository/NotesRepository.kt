@@ -28,4 +28,6 @@ class NotesRepository @Inject constructor(
         return notesDAO.searchNotes(search)
     }
 
+    suspend fun deleteNote(note: Note) = notesDAO.deleteNote(note)
+
 }

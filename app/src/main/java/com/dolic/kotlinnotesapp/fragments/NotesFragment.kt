@@ -20,6 +20,8 @@ import com.dolic.kotlinnotesapp.selectionUtils.NoteItemKeyProvider
 import com.dolic.kotlinnotesapp.selectionUtils.NoteItemsDetailsLookup
 import com.dolic.kotlinnotesapp.viewmodels.NotesViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 /**
  * Fragment which shows all notes added to the app
@@ -59,6 +61,16 @@ class NotesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewmodel.deleteJob?.let {
+           if(it.isCancelled) {
+               for(note in viewmodel.notesToDelete) {
+                   viewmodel.deleteJob = lifecycleScope.launch {
+                       viewmodel.deleteNote(note).await()
+                       viewmodel.notesToDelete.remove(note)
+                   }
+               }
+           }
+        }
 
         setupRecycler()
         setupSelectionTracker()
@@ -147,6 +159,24 @@ class NotesFragment : Fragment() {
             }
 
             override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+
+                when(item?.itemId) {
+
+                    R.id.delete_notes -> {
+                        viewmodel.notesToDelete = tracker?.selection?.toList()?.toMutableList()!!
+                        for(note in viewmodel.notesToDelete) {
+                            viewmodel.deleteJob = lifecycleScope.launch {
+                                viewmodel.deleteNote(note).await()
+                                viewmodel.notesToDelete.remove(note)
+                            }
+                        }
+                        tracker.clearSelection()
+                        mode?.finish()
+                        actionMode = null
+                    }
+
+                }
+
                 return false
             }
 
