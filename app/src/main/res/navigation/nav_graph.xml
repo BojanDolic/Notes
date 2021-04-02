@@ -9,6 +9,21 @@
         android:id="@+id/notesFragment"
         android:name="com.dolic.kotlinnotesapp.fragments.NotesFragment"
         android:label="fragment_notes"
-        tools:layout="@layout/fragment_notes" />
+        tools:layout="@layout/fragment_notes" >
+
+        <action
+            android:id="@+id/action_notesFragment_to_newNoteFragment"
+            app:destination="@id/newNoteFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/notesFragment"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/newNoteFragment"
+        android:name="com.dolic.kotlinnotesapp.fragments.NewNoteFragment"
+        android:label="new_note_fragment"
+        tools:layout="@layout/new_note_fragment" />
 
 </navigation>

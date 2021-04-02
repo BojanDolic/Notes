@@ -1,13 +1,18 @@
 package com.dolic.kotlinnotesapp.fragments
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
 import android.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.appcompat.view.ActionMode
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
@@ -16,10 +21,13 @@ import com.dolic.kotlinnotesapp.R
 import com.dolic.kotlinnotesapp.adapters.NotesRecyclerAdapter
 import com.dolic.kotlinnotesapp.databinding.FragmentNotesBinding
 import com.dolic.kotlinnotesapp.entities.Note
+import com.dolic.kotlinnotesapp.onSearchTextChanged
 import com.dolic.kotlinnotesapp.selectionUtils.NoteItemKeyProvider
 import com.dolic.kotlinnotesapp.selectionUtils.NoteItemsDetailsLookup
 import com.dolic.kotlinnotesapp.viewmodels.NotesViewModel
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -44,6 +52,8 @@ class NotesFragment : Fragment() {
     private var actionMode: ActionMode? = null
     private val notesAdapter = NotesRecyclerAdapter()
 
+    private lateinit var searchView: SearchView
+
     val binding get() = _binding!!
 
     override fun onCreateView(
@@ -60,6 +70,20 @@ class NotesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        NavigationUI.setupWithNavController(
+            binding.notesToolbar,
+            findNavController()
+        )
+
+        (activity as AppCompatActivity).setSupportActionBar(binding.notesToolbar)
+
+        viewmodel.searchJob?.let { job ->
+            viewmodel.searchJob = lifecycleScope.launch(Dispatchers.IO) {
+                 val notes = viewmodel.searchNotes(viewmodel.searchQuery)
+                notesAdapter.submitList(notes)
+            }
+        }
 
         viewmodel.deleteJob?.let {
            if(it.isCancelled) {
@@ -79,6 +103,10 @@ class NotesFragment : Fragment() {
             notesAdapter.submitList(notes)
         })
 
+        binding.fab.setOnClickListener {
+            findNavController().navigate(NotesFragmentDirections.actionNotesFragmentToNewNoteFragment())
+        }
+
         /*binding.bottomAppBar.setOnMenuItemClickListener(object : Toolbar.OnMenuItemClickListener {
 
             override fun onMenuItemClick(item: MenuItem?): Boolean {
@@ -92,6 +120,8 @@ class NotesFragment : Fragment() {
             binding.searchEdittext.isEnabled = true
             binding.searchEdittext.requestFocus()
         }*/
+
+        setHasOptionsMenu(true)
 
     }
 
@@ -173,6 +203,12 @@ class NotesFragment : Fragment() {
                         tracker.clearSelection()
                         mode?.finish()
                         actionMode = null
+
+                        Snackbar.make(binding.root,
+                        "Items deleted",
+                        Snackbar.LENGTH_SHORT).apply {
+                            anchorView = binding.fab
+                        }.show()
                     }
 
                 }
@@ -188,7 +224,6 @@ class NotesFragment : Fragment() {
         return actionModeInterface.startActionMode(actionModeCallback)
     }
 
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         tracker?.onSaveInstanceState(outState)
@@ -199,16 +234,45 @@ class NotesFragment : Fragment() {
         tracker?.onRestoreInstanceState(savedInstanceState)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.toolbar_search_menu, menu)
+
+        val searchItem = menu.findItem(R.id.toolbar_search)
+        searchView = searchItem.actionView as SearchView
+
+        val searchQuery = viewmodel.searchQuery
+
+        if(searchQuery.isNotEmpty()) {
+            searchItem.expandActionView()
+            searchView.setQuery(searchQuery, false)
+        }
+
+        searchView.onSearchTextChanged { searchString ->
+            viewmodel.searchJob = lifecycleScope.launch(Dispatchers.IO) {
+                viewmodel.searchQuery = searchString
+                val notes = viewmodel.searchNotes(viewmodel.searchQuery)
+                notesAdapter.submitList(notes)
+            }
+        }
+
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         actionModeInterface = context as FragmentActionModeStart
     }
 
     fun setupRecycler() {
+
+        var spanCount = 2
+
+        if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            spanCount = 3
+
         binding.notesRecycler.apply {
             this.adapter = notesAdapter
             layoutManager = StaggeredGridLayoutManager(
-                2,
+                spanCount,
                 StaggeredGridLayoutManager.VERTICAL)
         }
     }
@@ -216,6 +280,12 @@ class NotesFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        searchView.setOnQueryTextListener(null)
+
+        viewmodel.deleteJob?.cancel()
+        viewmodel.searchJob?.cancel()
+
     }
 
 }
