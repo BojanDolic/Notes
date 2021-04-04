@@ -8,22 +8,29 @@
     <fragment
         android:id="@+id/notesFragment"
         android:name="com.dolic.kotlinnotesapp.fragments.NotesFragment"
-        android:label="fragment_notes"
+        android:label="Notix"
         tools:layout="@layout/fragment_notes" >
 
         <action
             android:id="@+id/action_notesFragment_to_newNoteFragment"
             app:destination="@id/newNoteFragment"
+            app:enterAnim="@anim/scale_anim"
             app:launchSingleTop="true"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@id/notesFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="false" />
 
     </fragment>
 
     <fragment
         android:id="@+id/newNoteFragment"
         android:name="com.dolic.kotlinnotesapp.fragments.NewNoteFragment"
-        android:label="new_note_fragment"
-        tools:layout="@layout/new_note_fragment" />
+        android:label="@string/create_note_fragment_title"
+        tools:layout="@layout/new_note_fragment" >
+        <argument
+            android:name="action_type"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
 
 </navigation>

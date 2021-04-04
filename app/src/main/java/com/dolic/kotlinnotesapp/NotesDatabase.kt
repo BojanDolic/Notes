@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import com.dolic.kotlinnotesapp.dao.NotesDAO
 import com.dolic.kotlinnotesapp.entities.Note
 
-@Database(entities = arrayOf(Note::class), version = 1, exportSchema = false)
+@Database(entities = arrayOf(Note::class), version = 5, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class NotesDatabase : RoomDatabase() {
 
@@ -27,6 +27,7 @@ abstract class NotesDatabase : RoomDatabase() {
                     NotesDatabase::class.java,
                     "notes_database"
                 )
+                    .fallbackToDestructiveMigration()
                     .build()
 
                 INSTANCE = instance

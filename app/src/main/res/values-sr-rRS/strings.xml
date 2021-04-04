@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KotlinNotesApp</string>
+    <string name="new_note_title_placeholder">Унесите наслов белешке</string>
+    <string name="new_note_desc_placeholder">Унесите опис белешке</string>
+    <string name="create_note_fragment_title">Креирајте нову белешку</string>
+</resources>

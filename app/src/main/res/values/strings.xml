@@ -1,5 +1,9 @@
 <resources>
-    <string name="app_name">KotlinNotesApp</string>
+    <string name="app_name" translatable="false">Notix</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="new_note_title_placeholder">Enter note title…</string>
+    <string name="new_note_desc_placeholder">Enter note description…</string>
+    <string name="create_note_fragment_title">Create new note</string>
+    <string name="new_note_error_text">Your note title/description can\'t be empty</string>
 </resources>

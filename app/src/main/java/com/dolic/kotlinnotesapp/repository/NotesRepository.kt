@@ -28,6 +28,7 @@ class NotesRepository @Inject constructor(
         return notesDAO.searchNotes(search)
     }
 
+    @WorkerThread
     suspend fun deleteNote(note: Note) = notesDAO.deleteNote(note)
 
 }

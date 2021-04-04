@@ -24,6 +24,7 @@ import com.dolic.kotlinnotesapp.entities.Note
 import com.dolic.kotlinnotesapp.onSearchTextChanged
 import com.dolic.kotlinnotesapp.selectionUtils.NoteItemKeyProvider
 import com.dolic.kotlinnotesapp.selectionUtils.NoteItemsDetailsLookup
+import com.dolic.kotlinnotesapp.util.Constants
 import com.dolic.kotlinnotesapp.viewmodels.NotesViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,7 +39,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class NotesFragment : Fragment() {
 
-    public interface FragmentActionModeStart {
+    interface FragmentActionModeStart {
         fun startActionMode(callback: ActionMode.Callback): ActionMode?
     }
 
@@ -59,7 +60,7 @@ class NotesFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentNotesBinding.inflate(
             inflater,
             container,
@@ -104,7 +105,7 @@ class NotesFragment : Fragment() {
         })
 
         binding.fab.setOnClickListener {
-            findNavController().navigate(NotesFragmentDirections.actionNotesFragmentToNewNoteFragment())
+            findNavController().navigate(NotesFragmentDirections.actionNotesFragmentToNewNoteFragment(Constants.ADD_NOTE_NAV))
         }
 
         /*binding.bottomAppBar.setOnMenuItemClickListener(object : Toolbar.OnMenuItemClickListener {
@@ -177,6 +178,12 @@ class NotesFragment : Fragment() {
 
     }
 
+    /**
+     * Function which sets up action mode used for deleting notes
+     *
+     * @param tracker Selection tracker for recyclerview
+     * @return ActionMode object to use
+     */
     fun setupActionMode(tracker: SelectionTracker<Note>?): ActionMode? {
         val actionModeCallback = object : ActionMode.Callback {
             override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
@@ -262,6 +269,10 @@ class NotesFragment : Fragment() {
         actionModeInterface = context as FragmentActionModeStart
     }
 
+    /**
+     * Sets up recyclerview when fragment is created
+     * Based on device rotation it determines spancount for StaggeredGridLayout
+     */
     fun setupRecycler() {
 
         var spanCount = 2

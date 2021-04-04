@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_note_color_btn"
+        android:title="Note color"
+        android:icon="@drawable/colorpicker_icon"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_note_tag_btn"
+        android:title="Note tag"
+        android:icon="@drawable/label_icon"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_note_add_btn"
+        android:title="Add note"
+        app:showAsAction="always"
+        android:icon="@drawable/tacnica_icon"/>
+
+
+</menu>

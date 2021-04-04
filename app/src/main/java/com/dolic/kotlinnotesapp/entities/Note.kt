@@ -16,5 +16,6 @@ data class Note(
     @ColumnInfo(name = "note_title") val noteTitle: String = "",
     @ColumnInfo(name = "note_desc") val noteDesc: String = "",
     @ColumnInfo(name = "date_created") val dateCreated: Date = Date(),
+    @ColumnInfo(name = "date_edited") val dateEdited: Date = Date(),
     @ColumnInfo(name = "note_tag") val noteTag: String = ""
 ) : Parcelable

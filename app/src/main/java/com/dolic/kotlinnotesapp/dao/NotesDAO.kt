@@ -1,16 +1,13 @@
 package com.dolic.kotlinnotesapp.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.dolic.kotlinnotesapp.entities.Note
 
 @Dao
 interface NotesDAO {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNote(note: Note)
 
     @Delete

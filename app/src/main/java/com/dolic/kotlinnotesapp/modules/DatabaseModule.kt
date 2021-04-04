@@ -32,5 +32,4 @@ object DatabaseModule {
         return database.notesDao()
     }
 
-
 }

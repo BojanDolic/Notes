@@ -13,7 +13,13 @@ class NewNoteViewModel @Inject constructor(
     val notesRepository: NotesRepository
 ) : ViewModel() {
 
+    var note: Note = Note()
+
     fun insertNote(note: Note) {
         viewModelScope.launch { notesRepository.insertNote(note) }
+    }
+
+    fun deleteNote(note: Note) {
+        viewModelScope.launch { notesRepository.deleteNote(note) }
     }
 }
