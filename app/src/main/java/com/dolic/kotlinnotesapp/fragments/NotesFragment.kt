@@ -104,23 +104,11 @@ class NotesFragment : Fragment() {
             notesAdapter.submitList(notes)
         })
 
+        // New note button click
         binding.fab.setOnClickListener {
             findNavController().navigate(NotesFragmentDirections.actionNotesFragmentToNewNoteFragment(Constants.ADD_NOTE_NAV))
         }
 
-        /*binding.bottomAppBar.setOnMenuItemClickListener(object : Toolbar.OnMenuItemClickListener {
-
-            override fun onMenuItemClick(item: MenuItem?): Boolean {
-                TODO("Not yet implemented")
-            }
-
-
-        })*/
-
-        /*binding.bottomAppBar.menu.findItem(R.id.menu_search).actionView.findViewById(R.id.)setOnClickListener {
-            binding.searchEdittext.isEnabled = true
-            binding.searchEdittext.requestFocus()
-        }*/
 
         setHasOptionsMenu(true)
 
@@ -128,7 +116,6 @@ class NotesFragment : Fragment() {
 
     /**
      * Function used to create SelectionTracker for recyclerview
-     *
      * @see SelectionTracker
      */
     fun setupSelectionTracker() {

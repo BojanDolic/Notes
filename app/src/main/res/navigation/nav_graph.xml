@@ -25,12 +25,15 @@
     <fragment
         android:id="@+id/newNoteFragment"
         android:name="com.dolic.kotlinnotesapp.fragments.NewNoteFragment"
-        android:label="@string/create_note_fragment_title"
+        android:label="{fragmentTitle}"
         tools:layout="@layout/new_note_fragment" >
         <argument
             android:name="action_type"
             app:argType="integer"
             android:defaultValue="0" />
+        <argument
+            android:name="fragmentTitle"
+            app:argType="string" />
     </fragment>
 
 </navigation>

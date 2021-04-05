@@ -6,4 +6,8 @@
     <string name="new_note_desc_placeholder">Enter note description…</string>
     <string name="create_note_fragment_title">Create new note</string>
     <string name="new_note_error_text">Your note title/description can\'t be empty</string>
+
+    <string name="new_note_edited_date_text">Last edit: %1$s</string>
+    <string name="new_note_edited_today_date_text">Last edit: today at %1$d:%2$d</string>
+
 </resources>
