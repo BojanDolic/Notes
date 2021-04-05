@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
+import androidx.recyclerview.selection.SelectionTracker
 import java.text.DateFormat
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
@@ -52,6 +53,30 @@ inline fun SearchView.onSearchTextChanged(crossinline listener: (String) -> Unit
     })
 
 }
+
+fun <T : Any> SelectionTracker<T>.setSelectionChangedObserver(listener: (Int) -> Unit) {
+    this.addObserver(object : SelectionTracker.SelectionObserver<T>() {
+
+        override fun onItemStateChanged(key: T, selected: Boolean) {
+            super.onItemStateChanged(key, selected)
+        }
+
+        override fun onSelectionRefresh() {
+            super.onSelectionRefresh()
+        }
+
+        override fun onSelectionChanged() {
+            super.onSelectionChanged()
+            val selectionSize = selection.size()
+            listener(selectionSize)
+        }
+
+        override fun onSelectionRestored() {
+            super.onSelectionRestored()
+        }
+    })
+}
+
 
 fun TextView.setDateText(date: Date) {
     val format = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.ENGLISH)

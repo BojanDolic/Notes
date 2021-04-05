@@ -10,4 +10,16 @@
     <string name="new_note_edited_date_text">Last edit: %1$s</string>
     <string name="new_note_edited_today_date_text">Last edit: today at %1$d:%2$d</string>
 
+    <string name="selected_one_note_title">Selected: %1$d note</string>
+    <string name="selected_many_notes_title">Selected: %1$d notes</string>
+    <string name="selected_few_notes_title">Selected: %1$d notes</string>
+
+    <plurals name="selection_tracker_selected_title_plurals">
+        <item quantity="one">@string/selected_one_note_title</item>
+        <item quantity="two">@string/selected_many_notes_title</item>
+        <item quantity="few">@string/selected_many_notes_title</item>
+        <item quantity="many">@string/selected_many_notes_title</item>
+        <item quantity="other">@string/selected_many_notes_title</item>
+    </plurals>
+
 </resources>

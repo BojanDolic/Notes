@@ -3,6 +3,7 @@ package com.dolic.kotlinnotesapp.fragments
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +25,7 @@ import com.dolic.kotlinnotesapp.entities.Note
 import com.dolic.kotlinnotesapp.onSearchTextChanged
 import com.dolic.kotlinnotesapp.selectionUtils.NoteItemKeyProvider
 import com.dolic.kotlinnotesapp.selectionUtils.NoteItemsDetailsLookup
+import com.dolic.kotlinnotesapp.setSelectionChangedObserver
 import com.dolic.kotlinnotesapp.util.Constants
 import com.dolic.kotlinnotesapp.viewmodels.NotesViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -50,7 +52,6 @@ class NotesFragment : Fragment() {
 
     private var tracker: SelectionTracker<Note>? = null
 
-    private var actionMode: ActionMode? = null
     private val notesAdapter = NotesRecyclerAdapter()
 
     private var searchView: SearchView? = null
@@ -79,6 +80,14 @@ class NotesFragment : Fragment() {
 
         (activity as AppCompatActivity).setSupportActionBar(binding.notesToolbar)
 
+        setupRecycler()
+        setupSelectionTracker()
+
+        viewmodel.actionMode?.let {
+            viewmodel.actionMode = setupActionMode(tracker)
+            viewmodel.actionMode?.invalidate()
+        }
+
         viewmodel.searchJob?.let { job ->
             viewmodel.searchJob = lifecycleScope.launch(Dispatchers.IO) {
                  val notes = viewmodel.searchNotes(viewmodel.searchQuery)
@@ -97,8 +106,6 @@ class NotesFragment : Fragment() {
            }
         }
 
-        setupRecycler()
-        setupSelectionTracker()
 
         viewmodel.getAllNotes().observe(viewLifecycleOwner, { notes ->
             notesAdapter.submitList(notes)
@@ -106,7 +113,10 @@ class NotesFragment : Fragment() {
 
         // New note button click
         binding.fab.setOnClickListener {
-            findNavController().navigate(NotesFragmentDirections.actionNotesFragmentToNewNoteFragment(Constants.ADD_NOTE_NAV))
+            findNavController().navigate(
+                NotesFragmentDirections.actionNotesFragmentToNewNoteFragment(
+                    Constants.ADD_NOTE_NAV,
+                    resources.getString(R.string.create_note_fragment_title)))
         }
 
 
@@ -132,7 +142,31 @@ class NotesFragment : Fragment() {
             ).build()
         notesAdapter.setTracker(tracker!!)
 
-        tracker?.addObserver(object : SelectionTracker.SelectionObserver<Note>() {
+        /**
+         * This is an extension function for SelectionTracker
+         * @see setSelectionChangedObserver
+         */
+        tracker?.setSelectionChangedObserver { selectionSize ->
+
+            if(selectionSize > 0) {
+                if (viewmodel.actionMode == null) {
+                    if (tracker != null) {
+                        if (selectionSize > 0)
+                            viewmodel.actionMode = setupActionMode(tracker)
+                    }
+
+                } else {
+                    viewmodel.actionMode?.title =
+                        resources.getQuantityString(
+                            R.plurals.selection_tracker_selected_title_plurals,
+                            selectionSize,
+                            selectionSize)
+                }
+            } else viewmodel.actionMode?.finish()
+
+        }
+
+        /*tracker?.addObserver(object : SelectionTracker.SelectionObserver<Note>() {
 
             override fun onItemStateChanged(key: Note, selected: Boolean) {
                 super.onItemStateChanged(key, selected)
@@ -145,23 +179,12 @@ class NotesFragment : Fragment() {
             override fun onSelectionChanged() {
                 super.onSelectionChanged()
 
-                val items = tracker?.selection!!.size()
-                if(items > 0) {
-                    if (actionMode == null) {
-                        if (tracker != null) {
-                            if (items > 0)
-                                actionMode = setupActionMode(tracker)
-                        }
-
-                    } else actionMode?.title = "Selected ${tracker?.selection?.size()!!}"
-                } else actionMode?.finish()
-
             }
 
             override fun onSelectionRestored() {
                 super.onSelectionRestored()
             }
-        })
+        })*/
 
     }
 
@@ -175,10 +198,23 @@ class NotesFragment : Fragment() {
         val actionModeCallback = object : ActionMode.Callback {
             override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
                 mode?.menuInflater?.inflate(R.menu.delete_toolbar_menu, menu)
+
                 return true
             }
 
             override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                val selectedSize = tracker?.selection?.size()
+
+                if (selectedSize != null) {
+                    if(selectedSize > 0) {
+                        mode?.title =
+                            resources.getQuantityString(
+                                R.plurals.selection_tracker_selected_title_plurals,
+                                selectedSize,
+                                selectedSize
+                            )
+                    }
+                }
                 return true
             }
 
@@ -196,7 +232,7 @@ class NotesFragment : Fragment() {
                         }
                         tracker.clearSelection()
                         mode?.finish()
-                        actionMode = null
+                        viewmodel.actionMode = null
 
                         Snackbar.make(binding.root,
                         "Items deleted",
@@ -212,7 +248,7 @@ class NotesFragment : Fragment() {
 
             override fun onDestroyActionMode(mode: ActionMode?) {
                 tracker?.clearSelection()
-                actionMode = null
+                viewmodel.actionMode = null
             }
         }
         return actionModeInterface.startActionMode(actionModeCallback)

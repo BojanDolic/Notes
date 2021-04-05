@@ -1,6 +1,7 @@
 package com.dolic.kotlinnotesapp.viewmodels
 
 import android.app.Application
+import androidx.appcompat.view.ActionMode
 import androidx.lifecycle.*
 import com.dolic.kotlinnotesapp.entities.Note
 import com.dolic.kotlinnotesapp.repository.NotesRepository
@@ -20,6 +21,8 @@ class NotesViewModel @Inject constructor(
     var deleteJob: Job? = null
 
     var searchQuery = ""
+
+    var actionMode: ActionMode? = null
 
     var notesToDelete: MutableList<Note> = mutableListOf()
 

@@ -62,7 +62,7 @@ class NotesRecyclerAdapter : ListAdapter<Note, NotesRecyclerAdapter.ViewHolder>(
             noteItemTitleText.text = note.noteTitle
             noteItemDateText.setDateText(note.dateCreated)
 
-            noteItemDateContainer.isInvisible = isSelected
+            noteItemDateText.isInvisible = isSelected
 
             if(isSelected) {
                 noteCardview.setStrokeColor(ColorStateList.valueOf(Color.BLACK))

@@ -7,4 +7,14 @@
     <string name="new_note_error_text">Наслов/опис белешке не може бити празан</string>
     <string name="new_note_edited_date_text">Последња измена: %1$s</string>
     <string name="new_note_edited_today_date_text">Последња измена: данас у %1$d:%2$d</string>
+    <string name="selected_one_note_title">Изабрана %1$d белешка</string>
+    <string name="selected_many_notes_title">Изабране: %1$d белешке</string>
+    <string name="selected_few_notes_title">Изабрано: %1$d белешки</string>
+
+    <plurals name="selection_tracker_selected_title_plurals">
+        <item quantity="one">@string/selected_one_note_title</item>
+        <item quantity="few">@string/selected_few_notes_title</item>
+        <item quantity="other">@string/selected_many_notes_title</item>
+    </plurals>
+
 </resources>
