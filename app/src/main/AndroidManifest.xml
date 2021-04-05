@@ -12,18 +12,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KotlinNotesApp">
 
-        <provider
-            android:name="androidx.work.impl.WorkManagerInitializer"
-            android:authorities="${applicationId}.workmanager-init"
-            tools:node="remove" />
-
-        <service android:name=".services.InsertService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-
-        <service android:name=".services.NoteInsertService"
-            android:stopWithTask="false"/>
-
         <activity android:name=".SimpleActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

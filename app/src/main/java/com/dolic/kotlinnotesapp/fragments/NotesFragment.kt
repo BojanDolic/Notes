@@ -53,7 +53,7 @@ class NotesFragment : Fragment() {
     private var actionMode: ActionMode? = null
     private val notesAdapter = NotesRecyclerAdapter()
 
-    private lateinit var searchView: SearchView
+    private var searchView: SearchView? = null
 
     val binding get() = _binding!!
 
@@ -251,10 +251,10 @@ class NotesFragment : Fragment() {
 
         if(searchQuery.isNotEmpty()) {
             searchItem.expandActionView()
-            searchView.setQuery(searchQuery, false)
+            searchView?.setQuery(searchQuery, false)
         }
 
-        searchView.onSearchTextChanged { searchString ->
+        searchView?.onSearchTextChanged { searchString ->
             viewmodel.searchJob = lifecycleScope.launch(Dispatchers.IO) {
                 viewmodel.searchQuery = searchString
                 val notes = viewmodel.searchNotes(viewmodel.searchQuery)
@@ -292,7 +292,7 @@ class NotesFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
-        searchView.setOnQueryTextListener(null)
+        searchView?.setOnQueryTextListener(null)
 
         viewmodel.deleteJob?.cancel()
         viewmodel.searchJob?.cancel()

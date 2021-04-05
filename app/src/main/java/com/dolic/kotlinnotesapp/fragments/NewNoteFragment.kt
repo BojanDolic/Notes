@@ -1,31 +1,18 @@
 package com.dolic.kotlinnotesapp.fragments
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.dolic.kotlinnotesapp.R
-import com.dolic.kotlinnotesapp.databinding.FragmentNotesBinding
 import com.dolic.kotlinnotesapp.databinding.NewNoteFragmentBinding
 import com.dolic.kotlinnotesapp.entities.Note
-import com.dolic.kotlinnotesapp.services.InsertService
-import com.dolic.kotlinnotesapp.services.NoteInsertService
-import com.dolic.kotlinnotesapp.setDateText
 import com.dolic.kotlinnotesapp.viewmodels.NewNoteViewModel
-import com.dolic.kotlinnotesapp.workmanager.InsertNoteWork
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -136,6 +123,9 @@ class NewNoteFragment : Fragment() {
     }
 
 
+    override fun onDestroy() {
+        super.onDestroy()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import com.dolic.kotlinnotesapp.NotesDatabase
 import com.dolic.kotlinnotesapp.dao.NotesDAO
 import com.dolic.kotlinnotesapp.entities.Note
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,9 +19,11 @@ class NotesRepository @Inject constructor(
     // Gets all notes
     var notes: LiveData<List<Note>> = notesDAO.getAllNotes()
 
-    @WorkerThread
-    suspend fun insertNote(note: Note) {
-        notesDAO.insertNote(note)
+
+    fun insertNote(note: Note) {
+        CoroutineScope(Dispatchers.IO).launch {
+            notesDAO.insertNote(note)
+        }
     }
 
     @WorkerThread
