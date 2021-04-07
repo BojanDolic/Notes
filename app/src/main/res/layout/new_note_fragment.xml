@@ -18,6 +18,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/new_note_cardview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="12dp"
@@ -79,5 +80,8 @@
 
         </com.google.android.material.bottomappbar.BottomAppBar>
 
+    <include
+        android:id="@+id/bottom_sheet"
+        layout="@layout/bottomsheet_color_picker_layout" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

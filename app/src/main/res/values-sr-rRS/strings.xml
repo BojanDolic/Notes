@@ -13,8 +13,9 @@
 
     <plurals name="selection_tracker_selected_title_plurals">
         <item quantity="one">@string/selected_one_note_title</item>
-        <item quantity="few">@string/selected_few_notes_title</item>
-        <item quantity="other">@string/selected_many_notes_title</item>
+        <item quantity="few">@string/selected_many_notes_title</item>
+        <item quantity="other">@string/selected_few_notes_title</item>
     </plurals>
+    <string name="pick_color_text">Изаберите боју белешке</string>
 
 </resources>

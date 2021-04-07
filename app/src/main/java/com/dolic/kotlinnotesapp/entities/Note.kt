@@ -18,5 +18,5 @@ data class Note(
     @ColumnInfo(name = "date_created") val dateCreated: Date = Date(),
     @ColumnInfo(name = "date_edited") val dateEdited: Date = Date(),
     @ColumnInfo(name = "note_tag") val noteTag: String = "",
-    @ColumnInfo(name = "note_color") val noteColor: Int = -1
+    @ColumnInfo(name = "note_color") var noteColor: Int = -1
 ) : Parcelable

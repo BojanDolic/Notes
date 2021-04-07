@@ -13,6 +13,7 @@
     <string name="selected_one_note_title">Selected: %1$d note</string>
     <string name="selected_many_notes_title">Selected: %1$d notes</string>
     <string name="selected_few_notes_title">Selected: %1$d notes</string>
+    <string name="pick_color_text">Pick note color</string>
 
     <plurals name="selection_tracker_selected_title_plurals">
         <item quantity="one">@string/selected_one_note_title</item>

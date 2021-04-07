@@ -57,6 +57,12 @@ class NotesRecyclerAdapter : ListAdapter<Note, NotesRecyclerAdapter.ViewHolder>(
     inner class ViewHolder(val binding: NoteItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bindViews(note: Note, isSelected: Boolean) = with(binding) {
+
+            noteCardview.backgroundTintList =
+                ColorStateList.valueOf(
+                    note.noteColor
+                )
+
             noteItemDescriptionText.isVisible = note.noteDesc.isNotEmpty()
             noteItemDescriptionText.text = note.noteDesc
             noteItemTitleText.text = note.noteTitle
