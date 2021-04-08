@@ -32,7 +32,6 @@ import java.util.*
  * Fragment which creates new note
  * It is also used to update the note according to the enter parameter
  *
- * @see Constants
  * @see Constants.ADD_NOTE_NAV
  * @see Constants.EDIT_NOTE_NAV
  */
@@ -70,16 +69,15 @@ class NewNoteFragment : Fragment() {
             findNavController()
         )
 
+        // Initialize and show note data
+        loadNote()
+
         binding.newNoteBottomappbar.replaceMenu(R.menu.toolbar_add_note_menu)
         setBottomAppBarMenuClickListener()
 
         parseEditDate()
 
         viewModel.bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet.root)
-
-        /*if(viewModel.bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED)
-            viewModel.bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        else viewModel.bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED*/
 
         viewModel.bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
 
@@ -115,9 +113,23 @@ class NewNoteFragment : Fragment() {
         activity?.onBackPressedDispatcher?.addCallback {
             if(viewModel.bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
                 viewModel.bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            else this.handleOnBackPressed()
+            else {
+                isEnabled = false
+                handleOnBackPressed()
+            }
         }
 
+    }
+
+    /**
+     * Function used for inizializing note item
+     */
+    fun loadNote() {
+        binding.newNoteCardview.backgroundTintList =
+            ColorStateList.valueOf(viewModel.noteColor)
+
+        binding.addNoteTitleEdittext.setText(viewModel.noteTitle)
+        binding.addNoteDescEdittext.setText(viewModel.noteDesc)
     }
 
     /**
@@ -224,6 +236,14 @@ class NewNoteFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+
+        val title = binding.addNoteTitleEdittext.text.toString().trim()
+        val desc = binding.addNoteDescEdittext.text.toString().trim()
+
+        with(viewModel) {
+            note.noteTitle = title
+            note.noteDesc = desc
+        }
         _binding = null
     }
 

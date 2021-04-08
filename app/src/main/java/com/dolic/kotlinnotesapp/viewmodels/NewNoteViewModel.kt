@@ -21,6 +21,8 @@ class NewNoteViewModel @Inject constructor(
     lateinit var bottomSheetBehavior: BottomSheetBehavior<CoordinatorLayout>
 
     val noteColor: Int get() = note.noteColor
+    val noteTitle: String get() = note.noteTitle
+    val noteDesc: String get() = note.noteDesc
 
     var note: Note = Note()
 

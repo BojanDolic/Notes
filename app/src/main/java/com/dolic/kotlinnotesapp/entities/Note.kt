@@ -13,8 +13,8 @@ import java.util.*
 @Parcelize
 data class Note(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    @ColumnInfo(name = "note_title") val noteTitle: String = "",
-    @ColumnInfo(name = "note_desc") val noteDesc: String = "",
+    @ColumnInfo(name = "note_title") var noteTitle: String = "",
+    @ColumnInfo(name = "note_desc") var noteDesc: String = "",
     @ColumnInfo(name = "date_created") val dateCreated: Date = Date(),
     @ColumnInfo(name = "date_edited") val dateEdited: Date = Date(),
     @ColumnInfo(name = "note_tag") val noteTag: String = "",
